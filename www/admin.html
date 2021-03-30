@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+  <title>projet Formations</title>
+  <meta name="language" content="French" />
+  <meta http-equiv="content-language" content="fr" />
+  <meta name="description" content="CSI 2020 - projet Formations" />
+  <meta name="author" content="Christophe Mames / CSI 2020" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:title" content="projet Formations" />
+  <meta property="og:site_name" content="projet Formations" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:description" content="CSI 2020 - projet Formations" />
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+  <div id="header">
+    header
+  </div>
+  <div id="main">
+    <div style="text-align: center; margin-top: 50vh; transform: translateY(-50%);">
+      <p>mot de passe</p>
+      <p><input type="password" id="pass"></input></p>
+      <p><input type="button" id="connect" value="connexion" style="visibility: hidden;"></input></p>
+    </div>
+  </div>
+  <script src="js/socket.io.min.js"></script>
+  <script src="js/openpgp.min.js"></script>
+  <script>
+    var openpgp = window.openpgp;
+    var keyse, keycd, keyce;
+        openpgp.initWorker({ path: 'js/openpgp.worker.min.js' });
+    var socket = io("http://" + window.location.hostname + ":8080");
+    socket.on("keye", async function (msg) {
+      keyse = msg;
+      var bt = document.querySelector("#connect");
+      bt.style.visibility = "visible";
+      bt.addEventListener("click", async function () {
+        password = document.querySelector("#pass").value;
+        const options = {
+          message: openpgp.message.fromText(password),
+          publicKeys: (await openpgp.key.readArmored(keyse)).keys
+        }
+        openpgp.encrypt(options).then(async function (password) {
+          socket.on("page", async function (msg) {
+            //decrypt msg
+            const privKeyObj = (await openpgp.key.readArmored(keycd)).keys[0]
+            await privKeyObj.decrypt("passphrase pour client socket");
+
+            const optioncd = {
+              message: await openpgp.message.readArmored(msg.data),
+              publicKeys: (await openpgp.key.readArmored(keyce)).keys,
+              privateKeys: [privKeyObj]
+            };
+            openpgp.decrypt(optioncd).then(function (texte) {
+              var fics=JSON.parse(texte.data);
+              //display msg in body
+              document.querySelector("#main").innerHTML = fics.http;
+              var loadedscript = document.createElement("script");
+              loadedscript.innerHTML = fics.js;
+              document.body.appendChild(loadedscript);
+              loadedscript.dispatchEvent(new Event("load"));
+            });
+          });
+          socket.emit("pass", password);
+        });
+      });
+    });
+    var options = {
+      userIds: [{ name: 'socket client', email: 'sclient@domain.local' }],
+      curve: "p521",
+      passphrase: "passphrase pour client socket"
+    };
+    openpgp.generateKey(options).then(function (key) {
+      keycd = key.privateKeyArmored;
+      keyce = key.publicKeyArmored;
+      socket.emit("key", keyce);
+    });
+
+  </script>
+</body>
+
+</html>

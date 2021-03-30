@@ -1,0 +1,44 @@
+#logoUdemy {
+    width: 10%;
+    height: auto;
+    float: left;
+}
+
+.nav-item:hover .dropdown-menu{
+    display: block;
+    width: 300px;
+}
+
+.navItemTest:hover .dropdown-item{
+    display: block;
+    width: 300px;
+}
+
+.iconFleche {
+    float: right;
+}
+
+.chevronIcon {
+    color: gray;
+}
+  
+  .search .input {
+    border-radius: 25px 25px 25px 25px;
+    font-size: 18px;
+    height: 50px;
+    width: 50px;
+    transition: width 0.3s ease;
+  }
+  
+  .btn:focus,
+  .input:focus {
+    outline: none;
+  }
+  
+  .search.active .input {
+    width: 500px;
+  }
+  
+  .search.active .btn {
+    transform: translateX(298px);
+  }
