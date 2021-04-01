@@ -9,19 +9,25 @@ const io = require('socket.io')(http, {
 
 http.listen(PORT, () => console.log(`Serveur allumer sur le port: ${PORT}`));
 
-const MongoClient = require("mongodb").MongoClient;
-const client = new MongoClient(URI, { useUnifiedTopology: true });
 
 io.on("connection", (socket => {
-  socket.on("request_formations", function () {
+
+  socket.on("requestFormations", function () {
+
+    const MongoClient = require("mongodb").MongoClient;
+    const client = new MongoClient(URI, { useUnifiedTopology: true });
+
     client.connect().then( () => {
+
       const database = client.db("formations");
       const collection = database.collection("formation");
-
       let formateurs = collection.find({});
       let formateur = formateurs.toArray();
-      formateur.then(function(result) {   
-        socket.emit("response_formations", result);
+
+      formateur.then(function(result) { 
+
+        socket.emit("responseFormations", result);
+        
       })
     }, error => {
       console.error(error);

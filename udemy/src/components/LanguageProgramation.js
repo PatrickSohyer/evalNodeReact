@@ -1,31 +1,36 @@
-import React, { Component } from 'react';
-import '../css/LanguageProgramation.css';
+import React, { Component } from "react";
+import "../css/LanguageProgramation.css";
 
 class LanguageProgramation extends Component {
-    render() {
-        return (
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-4 text-center">
-                        <h3 className="titleChoice">Le choix de cours le plus vaste du monde</h3>
-                        <p className="textChoice">Choisissez parmi 130 000 vidéos de cours en ligne. De nouveaux cours sont ajoutés tous les mois.</p>
-                        <div className="card">
-                            <div className="card-header">
-                            Formateur : {this.props.nom}
-                            </div>
-                            <ul className="list-group list-group-flush">
-                                <li className="list-group-item">Titre : {this.props.titre}</li>
-                                <li className="list-group-item">Famille : {this.props.famille}</li>
-                                <li className="list-group-item">Sous famille : {this.props.ssfamille}</li>
-                                <li className="list-group-item">Durée : {this.props.duree}</li>
-                                <li className="list-group-item">Prix : {this.props.prix}€</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
+  getData = () => {
+    return this.props.formation.map((item, index) => {
+      return (
+        <div className="col-4 text-center">
+          <div key={index} className="card">
+            <div className="card-header">Formateur : {item.nom}</div>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">Titre : {item.titre}</li>
+              <li className="list-group-item">Famille : {item.famille}</li>
+              <li className="list-group-item">
+                Sous famille : {item.ssfamille}
+              </li>
+              <li className="list-group-item">Durée : {item.duree} heures</li>
+              <li className="list-group-item">Prix : {item.prix}€</li>
+              <li className="list-group-item">Mail : {item.contact}</li>
+              <li className="list-group-item">Statut : {item.status}</li>
+            </ul>
+          </div>
+        </div>
+      );
+    });
+  };
+  render() {
+    return (
+      <div className="container-fluid">
+        <div className="row">{this.getData()}</div>
+      </div>
+    );
+  }
 }
 
 export { LanguageProgramation };
